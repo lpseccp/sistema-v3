@@ -1,4 +1,5 @@
 let dados = [];
+let interessesSelecionados = [];
 
 function importar() {
   const input = document.getElementById('inputExcel');
@@ -24,7 +25,6 @@ function importar() {
       return;
     }
 
-    // Leitura exata das colunas
     dados = json.map(item => ({
       loja: item['Loja'] || 'Desconhecida',
       origem: item['OrigemDoCliente'] || 'Desconhecida',
@@ -32,15 +32,20 @@ function importar() {
       interesse: item['Interesses'] || 'Não informado'
     }));
 
-    mostrarFiltrosDeInteresse();
+    renderInterface();
   };
 
   reader.readAsArrayBuffer(file);
 }
 
-function mostrarFiltrosDeInteresse() {
+function renderInterface() {
   const container = document.getElementById('graficos');
-  container.innerHTML = '<h2>Selecione um interesse:</h2>';
+  container.innerHTML = '';
+
+  const filtroDiv = document.createElement('div');
+  filtroDiv.id = 'filtroInteresses';
+  filtroDiv.innerHTML = '<h2>Filtros por Interesse:</h2>';
+  container.appendChild(filtroDiv);
 
   const interessesUnicos = [...new Set(dados.map(d => d.interesse))];
 
@@ -48,19 +53,43 @@ function mostrarFiltrosDeInteresse() {
     const botao = document.createElement('button');
     botao.innerText = interesse;
     botao.className = 'filtro-interesse';
-    botao.onclick = () => filtrarPorInteresse(interesse);
-    container.appendChild(botao);
+    botao.dataset.valor = interesse;
+    botao.onclick = () => alternarFiltro(botao);
+    filtroDiv.appendChild(botao);
   });
+
+  const graficosDiv = document.createElement('div');
+  graficosDiv.id = 'graficosFiltrados';
+  container.appendChild(graficosDiv);
+
+  atualizarGraficos();
 }
 
-function filtrarPorInteresse(interesseSelecionado) {
-  const container = document.getElementById('graficos');
-  container.innerHTML = `
-    <h2>Interesse: ${interesseSelecionado}</h2>
-    <button onclick="mostrarFiltrosDeInteresse()">⬅ Voltar</button>
-  `;
+function alternarFiltro(botao) {
+  const interesse = botao.dataset.valor;
 
-  const filtrados = dados.filter(d => d.interesse === interesseSelecionado);
+  if (interessesSelecionados.includes(interesse)) {
+    interessesSelecionados = interessesSelecionados.filter(i => i !== interesse);
+    botao.classList.remove('ativo');
+  } else {
+    interessesSelecionados.push(interesse);
+    botao.classList.add('ativo');
+  }
+
+  atualizarGraficos();
+}
+
+function atualizarGraficos() {
+  const graficosDiv = document.getElementById('graficosFiltrados');
+  graficosDiv.innerHTML = '';
+
+  let filtrados = [];
+
+  if (interessesSelecionados.length === 0) {
+    filtrados = dados;
+  } else {
+    filtrados = dados.filter(d => interessesSelecionados.includes(d.interesse));
+  }
 
   function contar(campo) {
     const contagem = {};
@@ -72,10 +101,10 @@ function filtrarPorInteresse(interesseSelecionado) {
   }
 
   const origemData = contar('origem');
-  criarGrafico('Origem do Cliente', 'origemGrafico', origemData, container);
+  criarGrafico('Origem do Cliente', 'origemGrafico', origemData, graficosDiv);
 
   const statusData = contar('status');
-  criarGrafico('Status do Atendimento', 'statusGrafico', statusData, container);
+  criarGrafico('Status do Atendimento', 'statusGrafico', statusData, graficosDiv);
 }
 
 function criarGrafico(titulo, id, dados, container) {
