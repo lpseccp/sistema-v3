@@ -26,3 +26,32 @@ canvas {
   margin-top: 30px;
 }
 
+/* Estilo dos botões de filtro */
+.filtro-interesse {
+  margin: 10px 10px 10px 0;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.3s;
+}
+
+/* Estilo quando o botão está selecionado */
+.filtro-interesse.ativo {
+  background-color: #28a745;
+}
+
+/* Responsividade para botões e gráficos */
+#filtroInteresses {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+h2, h3 {
+  margin-top: 30px;
+  color: #444;
+}
