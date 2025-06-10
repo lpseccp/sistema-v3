@@ -42,6 +42,7 @@ function renderInterface() {
   const container = document.getElementById('graficos');
   container.innerHTML = '';
 
+  // Área de filtros
   const filtroDiv = document.createElement('div');
   filtroDiv.id = 'filtroInteresses';
   filtroDiv.innerHTML = '<h2>Filtros por Interesse:</h2>';
@@ -58,11 +59,12 @@ function renderInterface() {
     filtroDiv.appendChild(botao);
   });
 
+  // Área dos gráficos (sempre presente)
   const graficosDiv = document.createElement('div');
   graficosDiv.id = 'graficosFiltrados';
   container.appendChild(graficosDiv);
 
-  atualizarGraficos(); // exibe os gráficos já na primeira vez
+  atualizarGraficos(); // mostra os gráficos iniciais (sem filtro)
 }
 
 function alternarFiltro(botao) {
