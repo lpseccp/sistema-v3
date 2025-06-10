@@ -62,7 +62,7 @@ function renderInterface() {
   graficosDiv.id = 'graficosFiltrados';
   container.appendChild(graficosDiv);
 
-  atualizarGraficos();
+  atualizarGraficos(); // exibe os gráficos já na primeira vez
 }
 
 function alternarFiltro(botao) {
